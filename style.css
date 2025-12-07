@@ -1,3 +1,5 @@
+/* style.css - Corrigido e Otimizado */
+
 :root{
   /* Cores Base */
   --accent1: #2D9CDB; 
@@ -15,7 +17,7 @@
   --glass: rgba(255,255,255,0.06);
   --text: #e6eef8;
   --input-border: rgba(255,255,255,0.1);
-  --tab-bg: #2d3b54; /* Fundo para o menu de abas */
+  --tab-bg: #2d3b54; 
   --tab-active-bg: var(--accent1);
 }
 
@@ -26,332 +28,472 @@
   --muted: #556270;
   --glass: rgba(0,0,0,0.04);
   --text: #071128;
-  --input-border: rgba(0,0,0,0.1);
-  --shadow: 0 10px 30px rgba(0,0,0,0.1);
-  --tab-bg: #e0e6ec; 
+  --input-border: rgba(0,0,0,0.15);
+  --tab-bg: #e0e5eb;
   --tab-active-bg: var(--accent1);
 }
 
 /* Dark theme overrides */
 .theme-dark {
-  --bg: #0b0f1a;
-  --card: #0f1724;
-  --muted: #9aa7bf;
-  --glass: rgba(255,255,255,0.03);
-  --text: #e6eef8;
-  --input-border: rgba(255,255,255,0.1);
-  --shadow: 0 10px 30px rgba(0,0,0,0.4);
-  --tab-bg: #1c273a;
-  --tab-active-bg: var(--accent1);
+  /* Já definido como padrão, mas mantido para clareza */
 }
 
 /* system theme (follows prefers-color-scheme) */
 .theme-system {
   color-scheme: light dark;
 }
-
-/* Base */
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
-  background: linear-gradient(180deg, var(--bg) 0%, #07162a 100%);
-  color:var(--text);
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  display:flex;
-  flex-direction:column;
-  min-height:100vh;
+@media (prefers-color-scheme: light) {
+  .theme-system {
+    /* Herda o tema light */
+    --bg: #f2f6fb;
+    --card: #ffffff;
+    --muted: #556270;
+    --glass: rgba(0,0,0,0.04);
+    --text: #071128;
+    --input-border: rgba(0,0,0,0.15);
+    --tab-bg: #e0e5eb;
+    --tab-active-bg: var(--accent1);
+  }
 }
 
-/* Headers */
-h2, h3, h1 { color: var(--text); }
-.muted { color: var(--muted); }
+/* -------------------- GERAL -------------------- */
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+body {
+    margin: 0;
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background-color .3s, color .3s;
+}
 
-/* Header */
-.header {
-    width: 100%;
-    background: linear-gradient(180deg, var(--accent1), var(--accent2));
-    border-bottom-left-radius: 40px;
-    border-bottom-right-radius: 40px;
+/* Container principal para centralizar o app */
+#app {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    height: 140px;
-    padding: 20px 10px;
-    color: white;
-    position: relative;
+    min-height: 100vh;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 0 40px rgba(0,0,0,0.1); /* Sombra para desktop */
 }
+
+.main {
+    flex-grow: 1;
+    position: relative; /* Base para o posicionamento absoluto das telas */
+    padding: 20px 10px;
+}
+
+/* -------------------- LAYOUT DE TELAS (CRUCIAL!) -------------------- */
+
+/* CORREÇÃO: Posiciona as telas para que elas não se sobreponham, 
+   e garante que apenas a tela ativa use o espaço */
+#start-screen, #quiz-screen, #result-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%; /* Ocupa a altura total do .main */
+    padding: 20px 10px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    /* Adicione 'display: none' no seu JS (o que já está sendo feito) 
+       ou use a classe .hidden */
+}
+
+/* A classe hidden (oculta) é essencial para o JavaScript */
+.hidden {
+    display: none !important;
+}
+
+.container {
+    padding: 0 10px;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.card {
+    background-color: var(--card);
+    padding: 24px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+.card.center {
+    text-align: center;
+}
+
+/* -------------------- HEADER -------------------- */
+.header {
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    height: 180px;
+    position: relative;
+    color: white;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.header-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.app-title {
+    font-size: 28px;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.app-sub {
+    margin: 4px 0 0;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* Decoração da Onda */
 .header-deco {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 30px;
-    opacity: 0.15;
+    height: 40px; 
+    background-color: var(--bg);
 }
-.header-inner{
-  max-width:980px;
-  margin:0 auto;
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-  align-items:center;
-  z-index: 10;
+.header-deco rect {
+    fill: var(--bg);
 }
-.app-title{margin:0;font-size:22px;letter-spacing:1px; font-weight: 800;}
-.app-sub{margin:0;font-size:14px;opacity:0.92}
 
-/* theme toggle */
-.theme-toggle{
-  position:absolute;
-  right:20px;
-  top:20px;
-  background:var(--glass);
-  border:1px solid rgba(255,255,255,0.2);
-  font-size:18px;
-  cursor:pointer;
-  color:white;
-  border-radius:50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-  z-index: 20;
+
+/* -------------------- TEMA (Toggle) -------------------- */
+.theme-toggle {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 .theme-toggle:hover {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.3);
 }
-.theme-toggle .icon-moon::before { content: '🌓'; }
-[data-theme="dark"] .theme-toggle .icon-moon::before { content: '🌙'; }
-[data-theme="light"] .theme-toggle .icon-moon::before { content: '☀️'; }
 
-
-/* main */
-.main{flex:1; width:100%; display:flex; justify-content:center; margin-top:-40px; padding:18px 12px;}
-.container{max-width:920px; width:100%;}
-
-/* card */
-.card{
-  background:var(--card);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  max-width:460px;
-  width:100%;
-  margin:0 auto;
-  transition: background 0.3s, box-shadow 0.3s;
+.icon-moon::after {
+    content: "🌙";
 }
-.card.center{padding:0}
-.card-inner{padding:24px}
+.theme-light .icon-moon::after {
+    content: "☀️";
+}
 
-/* start screen */
-.instructions {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+/* -------------------- FORMULÁRIO / INÍCIO -------------------- */
+.form-group {
     margin-bottom: 20px;
-    line-height: 1.4;
-    padding: 10px;
-    border-left: 3px solid var(--accent1);
-    background: var(--glass);
-    border-radius: 4px;
 }
-.row{display:flex;gap:12px;align-items:center;margin-top:16px}
-.row label{min-width:90px;font-weight: 600;}
-select{
-    flex: 1;
-    padding:10px 12px;
-    border-radius:10px;
-    border:1px solid var(--input-border);
-    background: var(--glass);
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
     color: var(--text);
+    font-size: 15px;
 }
-.actions{justify-content:space-between; margin-top: 24px;}
-.btn{
-  padding:14px 20px;
-  border-radius:12px;
-  border:none;
-  cursor:pointer;
-  font-weight:700;
-  transition:all .2s ease;
-  flex: 1;
-  text-align: center;
+
+select {
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--input-border);
+    background-color: var(--card);
+    color: var(--text);
+    font-size: 16px;
+    appearance: none; /* Remove seta padrão */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%236B7280' d='M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
 }
-.btn.primary{background:var(--accent-cta);color:white;box-shadow:0 8px 18px -4px rgba(0,191,255,0.3)}
-.btn.primary:hover{transform:translateY(-2px);box-shadow:0 12px 24px -4px rgba(0,191,255,0.4)}
-.btn.outline{background:var(--glass);border:1px solid var(--input-border);color:var(--text); flex: 0.7;}
-.btn.outline:hover{background:var(--input-border)}
-.btn.danger{background:var(--danger);color:white}
 
-/* --- Tabs para seleção de temas --- */
-.themes { margin-top: 20px; }
-.themes legend { font-weight: 700; margin-bottom: 10px; }
 
+/* --- Abas (Tabs) --- */
 .tabs-menu {
     display: flex;
-    flex-wrap: wrap; /* Permite quebrar linha em telas pequenas */
-    background: var(--tab-bg);
-    border-radius: 10px;
-    padding: 4px;
+    gap: 10px;
     margin-bottom: 15px;
-    gap: 4px; /* Espaçamento entre botões */
-}
-.tab-btn {
-    flex: 1;
-    min-width: 100px; /* Garante que os botões não fiquem muito pequenos */
-    padding: 8px 10px;
-    border: none;
-    background: transparent;
-    color: var(--muted);
-    font-weight: 600;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-.tab-btn.active {
-    background: var(--tab-active-bg);
-    color: white;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-}
-/* Força a quebra de linha em telas muito pequenas */
-@media (max-width: 400px) {
-    .tab-btn { flex: 1 1 48%; min-width: 0; }
-    .tabs-menu { gap: 6px; }
 }
 
+.tab-btn {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--tab-bg);
+    color: var(--text);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.tab-btn.active {
+    background-color: var(--tab-active-bg);
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Painéis de Conteúdo */
 .themes-tab-pane {
     display: none;
-    padding: 15px 0 5px 0; /* Padding interno da aba */
-    min-height: 50px; /* Altura mínima para evitar "pulos" */
+    padding: 5px;
 }
 .themes-tab-pane.active {
     display: block;
 }
-.themes-tab-pane label {
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+.checkbox-label {
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 10px;
-    background: var(--glass);
-    border-radius: 8px;
-    font-weight: 600;
+    border-radius: 10px;
+    border: 1px solid var(--input-border);
+    background: var(--bg); /* Usa o fundo do app, não do card */
     cursor: pointer;
-    transition: border-color 0.2s;
-    border: 1px solid transparent;
-}
-.themes-tab-pane label:hover {
-    border-color: var(--accent1);
-}
-.themes-tab-pane input[type=checkbox] {
-    accent-color: var(--accent1);
-    width: 18px;
-    height: 18px;
+    font-weight: normal;
+    transition: background-color 0.2s, border-color 0.2s;
 }
 
-/* quiz */
-#quiz-screen { max-width: 600px; width: 100%; margin: 0 auto;}
-.banner{
-  width:100%;
-  height:50px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:white;
-  font-weight:700;
-  border-radius:var(--radius) var(--radius) 0 0;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  font-size:16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+.checkbox-label:hover {
+    background: var(--glass);
 }
-.question-card{padding:24px;border-radius:0 0 var(--radius) var(--radius);margin-top:0} 
-.time-wrap{
+
+.checkbox-label input:checked + span {
+    color: var(--accent1);
+    font-weight: 700;
+}
+
+/* Botões */
+.actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.btn.primary {
+    background-color: var(--accent1);
+    color: white;
+}
+
+.btn.danger {
+    background-color: var(--danger);
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* -------------------- TELA DO QUIZ -------------------- */
+.banner {
+    position: relative;
+    padding: 15px;
+    margin-top: -30px; /* Sobrepõe um pouco o header */
+    border-radius: 14px;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    transition: background 0.3s;
+}
+
+.question-card {
+    padding: 18px;
+    border-radius: 20px;
+    margin-top: 20px;
+}
+
+.time-wrap {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
     border-bottom: 1px dashed var(--input-border);
 }
-.q-number { font-weight: 600; font-size: 14px; }
-.time{font-weight:700; font-size: 14px; transition: color 0.3s;}
+.q-number {
+    font-weight: 600;
+}
+.time {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--success); /* Cor inicial, JS ajusta */
+}
 
-.question-text{font-size:20px;margin:0 0 20px 0;text-align:center;font-weight: 700;}
+.question-text {
+    font-size: 18px;
+    margin: 6px 0 20px 0;
+    text-align: center;
+    min-height: 40px; /* Para evitar saltos de layout */
+}
 
 /* answers */
-.answers{display:flex;flex-direction:column;gap:12px}
-.answer-btn{
-  background:var(--card);
-  border-radius:12px;
-  padding:15px 18px;
-  border:1px solid var(--input-border);
-  text-align:left;
-  font-weight:600;
-  font-size:16px;
-  cursor:pointer;
-  transition:all .2s ease-out;
-  box-shadow: 0 4px 10px rgba(8,18,36,0.04);
+.answers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
-.answer-btn:hover{
-    transform:translateY(-2px);
-    border-color: var(--accent-cta);
-    box-shadow:0 8px 20px rgba(0,191,255,0.15);
+
+.answer-btn {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 14px;
+    border: 1px solid var(--input-border);
+    text-align: left;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all .18s;
+    box-shadow: 0 6px 14px rgba(8,18,36,0.06);
+    color: var(--text);
 }
-.answer-btn.disabled{opacity:0.7;pointer-events:none;transform:none;box-shadow:none}
+
+.answer-btn:hover:not(.disabled) {
+    background-color: var(--glass);
+    border-color: var(--accent1);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(8,18,36,0.1);
+}
+
+.answer-btn.disabled {
+    opacity: 0.7;
+    pointer-events: none;
+    transform: none;
+    box-shadow: none;
+}
 
 /* correct/incorrect states */
-.answer-correct{
-    background:var(--success);
-    color:white;
-    border-color:var(--success);
+.answer-correct {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
     transform: scale(1.02);
 }
-.answer-wrong{
-    background:var(--danger);
-    color:white;
-    border-color:var(--danger);
+.answer-wrong {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
 }
 
 /* progress */
-.progress-wrap{margin-top:20px}
-.progress-bar{height:8px;background:var(--input-border);border-radius:999px;overflow:hidden}
-#progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent1),var(--accent2));transition:width .5s ease}
+.progress-wrap {
+    margin-top: 20px;
+}
+.progress-bar {
+    height: 8px;
+    background: var(--input-border);
+    border-radius: 999px;
+    overflow: hidden;
+}
+#progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    transition: width .5s ease;
+}
 
-/* result */
-.big{font-size:22px;font-weight:800; color: var(--accent1);}
-.summary{
-    white-space:pre-wrap;
-    padding:15px;
-    border-radius:10px;
-    background:var(--glass);
-    margin-top:20px;
+/* -------------------- TELA DE RESULTADO -------------------- */
+#result-screen {
+    /* Centralizado via flexbox no main content */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.card-inner {
+    max-width: 450px;
+    width: 100%;
+    padding: 24px;
+}
+
+.big {
+    font-size: 22px;
+    font-weight: 800; 
+    color: var(--accent1);
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.muted {
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.summary {
+    white-space: pre-wrap;
+    padding: 15px;
+    border-radius: 10px;
+    background: var(--glass);
+    margin-top: 20px;
     font-size: 14px;
     text-align: left;
+    color: var(--text);
 }
-.result-actions .btn { flex: 1; }
+.result-actions { 
+    margin-top: 30px;
+    width: 100%;
+}
+.result-actions .btn { 
+    flex: 1; 
+}
 
-/* --- Responsividade Aprimorada e Correção de Sobreposições --- */
+/* -------------------- RESPONSIVIDADE -------------------- */
 @media (max-width: 600px){
-    /* Evita que o header fique muito alto em mobile */
-    .header{height: 160px;} 
-    /* Garante que o toggle button não sobreponha o título */
-    .theme-toggle{top: 15px; right: 15px;}
-    .main{padding: 10px 8px; margin-top: -25px;} /* Reduz margens e padding */
-    .card{max-width: 100%; margin: 0;}
-    .app-title{font-size: 18px;}
+    /* Header */
+    .header { height: 160px; }
+    .app-title { font-size: 24px; }
+    .theme-toggle { top: 10px; right: 10px; }
     
-    /* Configurações de Ações e Temas */
-    .row.actions { flex-direction: column; gap: 10px; }
-    .btn { flex: auto; width: 100%; }
-    .btn.outline { flex: auto; }
-}
+    /* Layout */
+    .actions { flex-direction: column; gap: 10px; }
+    .btn { font-size: 15px; }
 
-@media (max-width: 400px){
-    .app-title{font-size: 16px;}
-    .header-inner{padding-top: 20px;}
-    .theme-toggle{width: 35px; height: 35px;}
+    /* Tabs */
+    .tabs-menu { flex-direction: column; }
+    .checkbox-grid { 
+        grid-template-columns: 1fr; /* Uma coluna em mobile */
+        gap: 8px;
+    }
 }
