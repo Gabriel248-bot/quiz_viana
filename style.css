@@ -1,0 +1,357 @@
+:root{
+  /* Cores Base */
+  --accent1: #2D9CDB; 
+  --accent2: #1E6FB3;
+  --accent-cta: #00bfff;
+  --success: #00C851;
+  --danger: #ff4444;
+  --radius: 16px; 
+  --shadow: 0 12px 36px rgba(2,8,23,0.35); 
+
+  /* Cores Padrão (Tema Escuro Implícito) */
+  --bg: #0f1724;
+  --card: #1c273a;
+  --muted: #9aa7bf;
+  --glass: rgba(255,255,255,0.06);
+  --text: #e6eef8;
+  --input-border: rgba(255,255,255,0.1);
+  --tab-bg: #2d3b54; /* Fundo para o menu de abas */
+  --tab-active-bg: var(--accent1);
+}
+
+/* Light theme overrides */
+.theme-light {
+  --bg: #f2f6fb;
+  --card: #ffffff;
+  --muted: #556270;
+  --glass: rgba(0,0,0,0.04);
+  --text: #071128;
+  --input-border: rgba(0,0,0,0.1);
+  --shadow: 0 10px 30px rgba(0,0,0,0.1);
+  --tab-bg: #e0e6ec; 
+  --tab-active-bg: var(--accent1);
+}
+
+/* Dark theme overrides */
+.theme-dark {
+  --bg: #0b0f1a;
+  --card: #0f1724;
+  --muted: #9aa7bf;
+  --glass: rgba(255,255,255,0.03);
+  --text: #e6eef8;
+  --input-border: rgba(255,255,255,0.1);
+  --shadow: 0 10px 30px rgba(0,0,0,0.4);
+  --tab-bg: #1c273a;
+  --tab-active-bg: var(--accent1);
+}
+
+/* system theme (follows prefers-color-scheme) */
+.theme-system {
+  color-scheme: light dark;
+}
+
+/* Base */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+  background: linear-gradient(180deg, var(--bg) 0%, #07162a 100%);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+
+/* Headers */
+h2, h3, h1 { color: var(--text); }
+.muted { color: var(--muted); }
+
+/* Header */
+.header {
+    width: 100%;
+    background: linear-gradient(180deg, var(--accent1), var(--accent2));
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    height: 140px;
+    padding: 20px 10px;
+    color: white;
+    position: relative;
+}
+.header-deco {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    opacity: 0.15;
+}
+.header-inner{
+  max-width:980px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  align-items:center;
+  z-index: 10;
+}
+.app-title{margin:0;font-size:22px;letter-spacing:1px; font-weight: 800;}
+.app-sub{margin:0;font-size:14px;opacity:0.92}
+
+/* theme toggle */
+.theme-toggle{
+  position:absolute;
+  right:20px;
+  top:20px;
+  background:var(--glass);
+  border:1px solid rgba(255,255,255,0.2);
+  font-size:18px;
+  cursor:pointer;
+  color:white;
+  border-radius:50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  z-index: 20;
+}
+.theme-toggle:hover {
+    background: rgba(255,255,255,0.15);
+}
+.theme-toggle .icon-moon::before { content: '🌓'; }
+[data-theme="dark"] .theme-toggle .icon-moon::before { content: '🌙'; }
+[data-theme="light"] .theme-toggle .icon-moon::before { content: '☀️'; }
+
+
+/* main */
+.main{flex:1; width:100%; display:flex; justify-content:center; margin-top:-40px; padding:18px 12px;}
+.container{max-width:920px; width:100%;}
+
+/* card */
+.card{
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  max-width:460px;
+  width:100%;
+  margin:0 auto;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.card.center{padding:0}
+.card-inner{padding:24px}
+
+/* start screen */
+.instructions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 20px;
+    line-height: 1.4;
+    padding: 10px;
+    border-left: 3px solid var(--accent1);
+    background: var(--glass);
+    border-radius: 4px;
+}
+.row{display:flex;gap:12px;align-items:center;margin-top:16px}
+.row label{min-width:90px;font-weight: 600;}
+select{
+    flex: 1;
+    padding:10px 12px;
+    border-radius:10px;
+    border:1px solid var(--input-border);
+    background: var(--glass);
+    color: var(--text);
+}
+.actions{justify-content:space-between; margin-top: 24px;}
+.btn{
+  padding:14px 20px;
+  border-radius:12px;
+  border:none;
+  cursor:pointer;
+  font-weight:700;
+  transition:all .2s ease;
+  flex: 1;
+  text-align: center;
+}
+.btn.primary{background:var(--accent-cta);color:white;box-shadow:0 8px 18px -4px rgba(0,191,255,0.3)}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:0 12px 24px -4px rgba(0,191,255,0.4)}
+.btn.outline{background:var(--glass);border:1px solid var(--input-border);color:var(--text); flex: 0.7;}
+.btn.outline:hover{background:var(--input-border)}
+.btn.danger{background:var(--danger);color:white}
+
+/* --- Tabs para seleção de temas --- */
+.themes { margin-top: 20px; }
+.themes legend { font-weight: 700; margin-bottom: 10px; }
+
+.tabs-menu {
+    display: flex;
+    flex-wrap: wrap; /* Permite quebrar linha em telas pequenas */
+    background: var(--tab-bg);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 15px;
+    gap: 4px; /* Espaçamento entre botões */
+}
+.tab-btn {
+    flex: 1;
+    min-width: 100px; /* Garante que os botões não fiquem muito pequenos */
+    padding: 8px 10px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.tab-btn.active {
+    background: var(--tab-active-bg);
+    color: white;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+/* Força a quebra de linha em telas muito pequenas */
+@media (max-width: 400px) {
+    .tab-btn { flex: 1 1 48%; min-width: 0; }
+    .tabs-menu { gap: 6px; }
+}
+
+.themes-tab-pane {
+    display: none;
+    padding: 15px 0 5px 0; /* Padding interno da aba */
+    min-height: 50px; /* Altura mínima para evitar "pulos" */
+}
+.themes-tab-pane.active {
+    display: block;
+}
+.themes-tab-pane label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: var(--glass);
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    border: 1px solid transparent;
+}
+.themes-tab-pane label:hover {
+    border-color: var(--accent1);
+}
+.themes-tab-pane input[type=checkbox] {
+    accent-color: var(--accent1);
+    width: 18px;
+    height: 18px;
+}
+
+/* quiz */
+#quiz-screen { max-width: 600px; width: 100%; margin: 0 auto;}
+.banner{
+  width:100%;
+  height:50px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-weight:700;
+  border-radius:var(--radius) var(--radius) 0 0;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-size:16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.question-card{padding:24px;border-radius:0 0 var(--radius) var(--radius);margin-top:0} 
+.time-wrap{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--input-border);
+}
+.q-number { font-weight: 600; font-size: 14px; }
+.time{font-weight:700; font-size: 14px; transition: color 0.3s;}
+
+.question-text{font-size:20px;margin:0 0 20px 0;text-align:center;font-weight: 700;}
+
+/* answers */
+.answers{display:flex;flex-direction:column;gap:12px}
+.answer-btn{
+  background:var(--card);
+  border-radius:12px;
+  padding:15px 18px;
+  border:1px solid var(--input-border);
+  text-align:left;
+  font-weight:600;
+  font-size:16px;
+  cursor:pointer;
+  transition:all .2s ease-out;
+  box-shadow: 0 4px 10px rgba(8,18,36,0.04);
+}
+.answer-btn:hover{
+    transform:translateY(-2px);
+    border-color: var(--accent-cta);
+    box-shadow:0 8px 20px rgba(0,191,255,0.15);
+}
+.answer-btn.disabled{opacity:0.7;pointer-events:none;transform:none;box-shadow:none}
+
+/* correct/incorrect states */
+.answer-correct{
+    background:var(--success);
+    color:white;
+    border-color:var(--success);
+    transform: scale(1.02);
+}
+.answer-wrong{
+    background:var(--danger);
+    color:white;
+    border-color:var(--danger);
+}
+
+/* progress */
+.progress-wrap{margin-top:20px}
+.progress-bar{height:8px;background:var(--input-border);border-radius:999px;overflow:hidden}
+#progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent1),var(--accent2));transition:width .5s ease}
+
+/* result */
+.big{font-size:22px;font-weight:800; color: var(--accent1);}
+.summary{
+    white-space:pre-wrap;
+    padding:15px;
+    border-radius:10px;
+    background:var(--glass);
+    margin-top:20px;
+    font-size: 14px;
+    text-align: left;
+}
+.result-actions .btn { flex: 1; }
+
+/* --- Responsividade Aprimorada e Correção de Sobreposições --- */
+@media (max-width: 600px){
+    /* Evita que o header fique muito alto em mobile */
+    .header{height: 160px;} 
+    /* Garante que o toggle button não sobreponha o título */
+    .theme-toggle{top: 15px; right: 15px;}
+    .main{padding: 10px 8px; margin-top: -25px;} /* Reduz margens e padding */
+    .card{max-width: 100%; margin: 0;}
+    .app-title{font-size: 18px;}
+    
+    /* Configurações de Ações e Temas */
+    .row.actions { flex-direction: column; gap: 10px; }
+    .btn { flex: auto; width: 100%; }
+    .btn.outline { flex: auto; }
+}
+
+@media (max-width: 400px){
+    .app-title{font-size: 16px;}
+    .header-inner{padding-top: 20px;}
+    .theme-toggle{width: 35px; height: 35px;}
+}

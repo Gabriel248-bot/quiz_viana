@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quiz de Informática</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+</head>
+<body>
+  <div id="app" class="theme-system" data-theme="system">
+    <header class="header">
+      <div class="header-inner">
+        <button id="btn-theme" class="theme-toggle" aria-label="Trocar tema" title="Trocar tema">
+            <span class="icon-moon"></span>
+        </button>
+        <h1 class="app-title">QUIZ DE INFORMÁTICA</h1>
+        <p class="app-sub">Desenvolvido por Gabriel_Viana_dev</p>
+      </div>
+      <svg class="header-deco" viewBox="0 0 100 20" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="g1" x1="0" x2="1">
+            <stop offset="0" stop-color="#2D9CDB"/>
+            <stop offset="1" stop-color="#1E6FB3"/>
+          </linearGradient>
+        </defs>
+        <rect width="100" height="20" fill="url(#g1)"></rect>
+      </svg>
+    </header>
+
+    <main class="main">
+      <section id="start-screen" class="card center">
+        <div class="card-inner">
+          <h2>Instruções e Configurações</h2>
+          <p class="muted instructions">
+            <span class="list-item">- Escolha a dificuldade e os temas que quer incluir.</span>
+            <span class="list-item">- Cada tema tem um tempo base; a dificuldade ajusta esse tempo.</span>
+            <span class="list-item">- O tema da pergunta será destacado em um banner colorido no topo.</span>
+          </p>
+
+          <div class="row config-row">
+            <label for="select-diff">Dificuldade</label>
+            <select id="select-diff">
+              <option>Fácil</option>
+              <option selected>Médio</option>
+              <option>Difícil</option>
+            </select>
+          </div>
+
+          <fieldset class="themes">
+            <legend>Temas (Ative os que deseja incluir)</legend>
+            <div class="tabs-menu">
+                <button class="tab-btn active" data-tab="Informática Geral">Geral</button>
+                <button class="tab-btn" data-tab="Hardware">Hardware</button>
+                <button class="tab-btn" data-tab="Redes">Redes</button>
+                <button class="tab-btn" data-tab="Software">Software</button>
+                <button class="tab-btn" data-tab="Periféricos">Periféricos</button>
+                <button class="tab-btn" data-tab="Programação">Programação</button>
+            </div>
+            
+            <div class="themes-tabs-content">
+                <div class="themes-tab-pane active" id="tab-Informática Geral">
+                    <label><input type="checkbox" value="Informática Geral" checked> Incluir Informática Geral</label>
+                </div>
+                
+                <div class="themes-tab-pane" id="tab-Hardware">
+                    <label><input type="checkbox" value="Hardware" checked> Incluir Hardware</label>
+                </div>
+                
+                <div class="themes-tab-pane" id="tab-Redes">
+                    <label><input type="checkbox" value="Redes" checked> Incluir Redes</label>
+                </div>
+                
+                <div class="themes-tab-pane" id="tab-Software">
+                    <label><input type="checkbox" value="Software" checked> Incluir Software</label>
+                </div>
+                
+                <div class="themes-tab-pane" id="tab-Periféricos">
+                    <label><input type="checkbox" value="Periféricos" checked> Incluir Periféricos</label>
+                </div>
+                
+                <div class="themes-tab-pane" id="tab-Programação">
+                    <label><input type="checkbox" value="Programação" checked> Incluir Programação</label>
+                </div>
+
+            </div>
+          </fieldset>
+
+          <div class="row actions">
+            <button id="btn-preview" class="btn outline">Visualizar temas</button>
+            <button id="btn-start" class="btn primary">Iniciar Quiz</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="quiz-screen" class="hidden">
+        <div id="banner" class="banner">CATEGORIA</div>
+
+        <div class="container">
+          <div class="question-card card">
+            
+            <div class="time-wrap">
+                <small id="q-number" class="q-number">Pergunta 1 / 10</small>
+                <div id="time" class="time">Tempo: 0s</div>
+            </div>
+
+            <h3 id="question-text" class="question-text">Pergunta aparece aqui</h3>
+
+            <div id="answers" class="answers">
+              </div>
+
+            <div class="progress-wrap">
+              <div id="progress-bar" class="progress-bar"><div id="progress-fill"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="result-screen" class="hidden card center">
+        <div class="card-inner">
+          <h2>RESULTADO FINAL</h2>
+          <p id="score-text" class="big"></p>
+          <p id="perf-text" class="muted"></p>
+
+          <div class="row actions result-actions">
+            <button id="btn-restart" class="btn primary">Jogar Novamente</button>
+            <button id="btn-exit" class="btn danger">Sair</button>
+          </div>
+
+          <pre id="summary" class="summary muted"></pre>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
