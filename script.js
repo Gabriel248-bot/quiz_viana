@@ -1,393 +1,499 @@
-/* script.js
-   Conversão da lógica do quiz.py -> comportamento em JS.
-   INCLUI:
-   - Perguntas, timer por categoria, multiplicador de dificuldade.
-   - Sons (Web Audio), shuffle, progresso, tema persistente.
-   - LÓGICA DE ABAS (TABS) para seleção de temas.
-   - REGISTRO DO SERVICE WORKER (PWA).
-*/
+/* style.css - Corrigido e Otimizado */
 
-/* -------------------- REGISTRO DO SERVICE WORKER -------------------- */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('Service Worker registrado com sucesso para PWA:', reg.scope))
-      .catch(err => console.log('Registro do Service Worker falhou:', err));
-  });
-}
-/* -------------------------------------------------------------------- */
+:root{
+  /* Cores Base */
+  --accent1: #2D9CDB; 
+  --accent2: #1E6FB3;
+  --accent-cta: #00bfff;
+  --success: #00C851;
+  --danger: #ff4444;
+  --radius: 16px; 
+  --shadow: 0 12px 36px rgba(2,8,23,0.35); 
 
-/* ---------- Perguntas (copiado do seu quiz.py) ---------- */
-const QUESTOES = [
- {"categoria":"Informática Geral","pergunta":"O que significa HTML?","opcoes":["HyperText Markup Language","HighText Machine Language","Hyper Transfer Markup Level","Hyperlinks Text Memory Language"],"resposta":"HyperText Markup Language"},
- {"categoria":"Informática Geral","pergunta":"Qual linguagem é executada no navegador?","opcoes":["Python","JavaScript","C#","Java"],"resposta":"JavaScript"},
- {"categoria":"Informática Geral","pergunta":"O que significa WWW?","opcoes":["Wide World Web","Wide Web Window","World Wide Web","World Web Wireless"],"resposta":"World Wide Web"},
- {"categoria":"Informática Geral","pergunta":"Qual desses é um sistema operacional?","opcoes":["Chrome","Firefox","Windows","Google Drive"],"resposta":"Windows"},
- {"categoria":"Informática Geral","pergunta":"Qual empresa criou o Windows?","opcoes":["Microsoft","Apple","IBM","Intel"],"resposta":"Microsoft"},
-
- {"categoria":"Hardware","pergunta":"Qual componente armazena dados permanentemente?","opcoes":["RAM","SSD/HDD","GPU","Fonte"],"resposta":"SSD/HDD"},
- {"categoria":"Hardware","pergunta":"Qual é responsável pelo processamento gráfico?","opcoes":["CPU","GPU","RAM","Fonte de alimentação"],"resposta":"GPU"},
- {"categoria":"Hardware","pergunta":"Para que serve a memória RAM?","opcoes":["Armazenar arquivos para sempre","Guardar dados temporários","Aumentar a internet","Refrigerar o PC"],"resposta":"Guardar dados temporários"},
- {"categoria":"Hardware","pergunta":"Qual unidade mede a velocidade da CPU?","opcoes":["GHz","MB","Watts","RPM"],"resposta":"GHz"},
- {"categoria":"Hardware","pergunta":"Qual componente conecta CPU, RAM e periféricos?","opcoes":["Placa-mãe","BIOS","HD","SSD"],"resposta":"Placa-mãe"},
- {"categoria":"Hardware","pergunta":"O que é overclock?","opcoes":["Aumentar a frequência de um componente","Desfragmentar o disco","Instalar drivers","Aumentar a RAM"],"resposta":"Aumentar a frequência de um componente"},
- {"categoria":"Hardware","pergunta":"O que caracteriza um SSD NVMe?","opcoes":["Conecta via SATA","É mais lento que SSD comum","Usa PCIe e é mais rápido","Só funciona em notebooks"],"resposta":"Usa PCIe e é mais rápido"},
- {"categoria":"Hardware","pergunta":"Qual peça converte energia para o PC?","opcoes":["Fonte (PSU)","Cooler","CPU","Placa de vídeo"],"resposta":"Fonte (PSU)"},
- {"categoria":"Hardware","pergunta":"Qual componente é responsável por armazenar dados mesmo sem energia?","opcoes":["RAM","SSD","Cache L1","GPU"],"resposta":"SSD"},
-
- {"categoria":"Redes","pergunta":"O que significa IP?","opcoes":["Internet Protocol","Internal Port","Internet Program","Information Process"],"resposta":"Internet Protocol"},
- {"categoria":"Redes","pergunta":"O que é um roteador?","opcoes":["Armazenamento","Distribuidor de sinal de rede","Processador de vídeo","Antivírus"],"resposta":"Distribuidor de sinal de rede"},
- {"categoria":"Redes","pergunta":"Qual cabo é usado em redes Ethernet?","opcoes":["HDMI","UTP (RJ-45)","VGA","SATA"],"resposta":"UTP (RJ-45)"},
- {"categoria":"Redes","pergunta":"O Wi-Fi transmite dados por:","opcoes":["Cabos coaxiais","Ondas de rádio","Fibra ótica","Cabo VGA"],"resposta":"Ondas de rádio"},
- {"categoria":"Redes","pergunta":"O que significa DNS?","opcoes":["Domain Name System","Data Network Service","Digital Node Server","Dynamic Network Setup"],"resposta":"Domain Name System"},
- {"categoria":"Redes","pergunta":"O que significa HTTP?","opcoes":["Hyper Transfer Text Program","HyperText Transfer Protocol","High Text Transfer Platform","Home Terminal Text Protocol"],"resposta":"HyperText Transfer Protocol"},
- {"categoria":"Redes","pergunta":"Qual protocolo é utilizado para enviar e-mails?","opcoes":["FTP","SMTP","DNS","DHCP"],"resposta":"SMTP"},
-
- {"categoria":"Software","pergunta":"Qual é um exemplo de software?","opcoes":["CPU","Placa de vídeo","Windows","Cooler"],"resposta":"Windows"},
- {"categoria":"Software","pergunta":"Antivírus é:","opcoes":["Hardware","Software","Periférico","Componente de rede"],"resposta":"Software"},
- {"categoria":"Software","pergunta":"O que é driver?","opcoes":["Programa que faz hardware funcionar","Cabo de energia","Peça do computador","Antivírus"],"resposta":"Programa que faz hardware funcionar"},
- {"categoria":"Software","pergunta":"O que é um arquivo .EXE?","opcoes":["Vídeo","Executável","ZIP","Áudio"],"resposta":"Executável"},
- {"categoria":"Software","pergunta":"O que é um sistema operacional?","opcoes":["Gerencia o hardware","Placa de som","Antivírus","Processador de vídeo"],"resposta":"Gerencia o hardware"},
- {"categoria":"Software","pergunta":"Qual tipo de software gerencia diretamente os recursos do computador?","opcoes":["Driver","Sistema Operacional","Utilitário","Firmware"],"resposta":"Sistema Operacional"},
-
- {"categoria":"Periféricos","pergunta":"Qual destes é um periférico de entrada?","opcoes":["Monitor","Teclado","Caixa de som","Projetor"],"resposta":"Teclado"},
- {"categoria":"Periféricos","pergunta":"Qual destes é um dispositivo de saída?","opcoes":["Mouse","Webcam","Monitor","Teclado"],"resposta":"Monitor"},
- {"categoria":"Periféricos","pergunta":"O que é uma impressora multifuncional?","opcoes":["Somente imprime","Imprime, copia e digitaliza","Só envia e-mail","Só digitaliza"],"resposta":"Imprime, copia e digitaliza"},
- {"categoria":"Periféricos","pergunta":"Qual conector geralmente fornece áudio analógico?","opcoes":["RJ-45","HDMI","P2 (3.5mm)","VGA"],"resposta":"P2 (3.5mm)"},
- {"categoria":"Periféricos","pergunta":"Qual desses dispositivos é considerado um periférico de saída?","opcoes":["Mouse","Teclado","Monitor","Scanner"],"resposta":"Monitor"},
-
- {"categoria":"Programação","pergunta":"O que significa SQL?","opcoes":["Structured Query Language","System Query Level","Super Quick Language","Secure Query Link"],"resposta":"Structured Query Language"},
- {"categoria":"Programação","pergunta":"Qual desses é um banco de dados relacional?","opcoes":["MongoDB","SQLite","Firebase","Redis"],"resposta":"SQLite"},
- {"categoria":"Programação","pergunta":"Qual destes é uma linguagem de programação?","opcoes":["HTML","CSS","Java","Photoshop"],"resposta":"Java"},
- {"categoria":"Programação","pergunta":"O Python é muito usado para:","opcoes":["Jogos AAA","IA e programação simples","Cuidar da rede Wi-Fi","Substituir o Windows"],"resposta":"IA e programação simples"},
- {"categoria":"Programação","pergunta":"Um loop serve para:","opcoes":["Armazenar arquivos","Repetir instruções","Criar janelas","Instalar programas"],"resposta":"Repetir instruções"},
- {"categoria":"Programação","pergunta":"O que faz um compilador?","opcoes":["Executa código em tempo real","Tradução de código fonte para código de máquina","Faz backup","Gerencia a memória"],"resposta":"Tradução de código fonte para código de máquina"},
- {"categoria":"Programação","pergunta":"Qual estrutura representa um laço de repetição?","opcoes":["if","switch","for","return"],"resposta":"for"},
- {"categoria":"Programação","pergunta":"Qual comando SQL é usado para atualizar dados?","opcoes":["SELECT","UPDATE","INSERT","DROP"],"resposta":"UPDATE"}
-];
-/* sanity: should be 40 */
-if(QUESTOES.length !== 40) console.warn("Aviso: EXPECTED 40 perguntas, found", QUESTOES.length);
-
-/* ---------- Config (mesmo do quiz.py) ---------- */
-const CORES = {
-  "Informática Geral":"#007BFF",
-  "Hardware":"#00C851",
-  "Redes":"#ff4444",
-  "Software":"#ff8800",
-  "Periféricos":"#ffeb3b",
-  "Programação":"#aa66cc"
-};
-
-const TEMPO_BASE_CATEGORIA = {
-  "Programação": 12,
-  "Hardware": 10,
-  "Redes": 8,
-  "Software": 15,
-  "Periféricos": 15,
-  "Informática Geral": 15
-};
-
-const MULTIPLICADOR_DIFICULDADE = {
-  "Fácil": 1.5,
-  "Médio": 1.0,
-  "Difícil": 0.65
-};
-
-/* ---------- Estado ---------- */
-let perguntasAtivas = [];
-let index = 0;
-let pontos = 0;
-let tempoAtual = 0;
-let timerInterval = null;
-let dificuldade = "Médio";
-
-/* ---------- Elementos DOM ---------- */
-const startScreen = document.getElementById("start-screen");
-const quizScreen = document.getElementById("quiz-screen");
-const resultScreen = document.getElementById("result-screen");
-const banner = document.getElementById("banner");
-const qNumber = document.getElementById("q-number");
-const qText = document.getElementById("question-text");
-const answersWrap = document.getElementById("answers");
-const timeLabel = document.getElementById("time");
-const progressFill = document.getElementById("progress-fill");
-const selectDiff = document.getElementById("select-diff");
-const btnStart = document.getElementById("btn-start");
-const btnPreview = document.getElementById("btn-preview");
-const btnRestart = document.getElementById("btn-restart");
-const btnExit = document.getElementById("btn-exit");
-const scoreText = document.getElementById("score-text");
-const perfText = document.getElementById("perf-text");
-const summary = document.getElementById("summary");
-const themeBtn = document.getElementById("btn-theme");
-const appRoot = document.getElementById("app");
-
-// Elementos NOVOS para as Abas
-const tabsMenu = document.querySelector(".tabs-menu");
-
-
-/* ---------- Theme persistence ---------- */
-const THEME_KEY = "quiz_theme_v1";
-(function initTheme(){
-  const saved = localStorage.getItem(THEME_KEY) || "system";
-  setTheme(saved);
-})();
-themeBtn.addEventListener("click", ()=>{
-  const current = appRoot.dataset.theme || "system";
-  const next = current === "system" ? "dark" : current === "dark" ? "light" : "system";
-  setTheme(next);
-});
-function setTheme(name){
-  appRoot.dataset.theme = name;
-  document.body.classList.remove("theme-light","theme-dark","theme-system");
-  document.body.classList.add(name === "light" ? "theme-light" : name === "dark" ? "theme-dark" : "theme-system");
-  localStorage.setItem(THEME_KEY, name);
-  // Atualiza o ícone do botão de tema se necessário (já que o HTML usa CSS para isso)
+  /* Cores Padrão (Tema Escuro Implícito) */
+  --bg: #0f1724;
+  --card: #1c273a;
+  --muted: #9aa7bf;
+  --glass: rgba(255,255,255,0.06);
+  --text: #e6eef8;
+  --input-border: rgba(255,255,255,0.1);
+  --tab-bg: #2d3b54; 
+  --tab-active-bg: var(--accent1);
 }
 
-/* ---------- Sound (Web Audio simple beeps) ---------- */
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let audioCtx = null;
-function ensureAudio(){
-  if(!audioCtx) audioCtx = new AudioCtx();
+/* Light theme overrides */
+.theme-light {
+  --bg: #f2f6fb;
+  --card: #ffffff;
+  --muted: #556270;
+  --glass: rgba(0,0,0,0.04);
+  --text: #071128;
+  --input-border: rgba(0,0,0,0.15);
+  --tab-bg: #e0e5eb;
+  --tab-active-bg: var(--accent1);
 }
-function beep(freq=600, duration=140, type="sine", gain=0.08){
-  try{
-    ensureAudio();
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.type = type;
-    o.frequency.value = freq;
-    g.gain.value = gain;
-    o.connect(g);
-    g.connect(audioCtx.destination);
-    o.start();
-    setTimeout(()=>{ o.stop(); }, duration);
-  }catch(e){ /* ignore */ }
-}
-function tocar_acerto(){ beep(1200,140,"sine",0.08); }
-function tocar_erro(){ beep(360,220,"sine",0.09); }
-function tocar_aviso(){ beep(800,80,"sine",0.06); }
 
-/* ---------- Utility ---------- */
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]] = [arr[j],arr[i]];
+/* Dark theme overrides */
+.theme-dark {
+  /* Já definido como padrão, mas mantido para clareza */
+}
+
+/* system theme (follows prefers-color-scheme) */
+.theme-system {
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: light) {
+  .theme-system {
+    /* Herda o tema light */
+    --bg: #f2f6fb;
+    --card: #ffffff;
+    --muted: #556270;
+    --glass: rgba(0,0,0,0.04);
+    --text: #071128;
+    --input-border: rgba(0,0,0,0.15);
+    --tab-bg: #e0e5eb;
+    --tab-active-bg: var(--accent1);
   }
-  return arr;
 }
 
-/* ---------- UI helpers ---------- */
-function show(el){ el.classList.remove("hidden"); el.style.display="block"; }
-function hide(el){ el.classList.add("hidden"); el.style.display="none"; }
+/* -------------------- GERAL -------------------- */
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+body {
+    margin: 0;
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background-color .3s, color .3s;
+}
 
-/* -------------------- LÓGICA DAS ABAS (TABS) -------------------- */
-if(tabsMenu) {
-  tabsMenu.addEventListener("click", (e) => {
-    const btn = e.target.closest(".tab-btn");
-    if (!btn || btn.classList.contains("active")) return;
+/* Container principal para centralizar o app */
+#app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 0 40px rgba(0,0,0,0.1); /* Sombra para desktop */
+}
 
-    const tabName = btn.dataset.tab;
+.main {
+    flex-grow: 1;
+    position: relative; /* Base para o posicionamento absoluto das telas */
+    padding: 20px 10px;
+}
+
+/* -------------------- LAYOUT DE TELAS (CRUCIAL!) -------------------- */
+
+/* CORREÇÃO: Posiciona as telas para que elas não se sobreponham, 
+   e garante que apenas a tela ativa use o espaço */
+#start-screen, #quiz-screen, #result-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%; /* Ocupa a altura total do .main */
+    padding: 20px 10px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    /* Adicione 'display: none' no seu JS (o que já está sendo feito) 
+       ou use a classe .hidden */
+}
+
+/* A classe hidden (oculta) é essencial para o JavaScript */
+.hidden {
+    display: none !important;
+}
+
+.container {
+    padding: 0 10px;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.card {
+    background-color: var(--card);
+    padding: 24px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+.card.center {
+    text-align: center;
+}
+
+/* -------------------- HEADER -------------------- */
+.header {
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    height: 180px;
+    position: relative;
+    color: white;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.header-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.app-title {
+    font-size: 28px;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.app-sub {
+    margin: 4px 0 0;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* Decoração da Onda */
+.header-deco {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px; 
+    background-color: var(--bg);
+}
+.header-deco rect {
+    fill: var(--bg);
+}
+
+
+/* -------------------- TEMA (Toggle) -------------------- */
+.theme-toggle {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.icon-moon::after {
+    content: "🌙";
+}
+.theme-light .icon-moon::after {
+    content: "☀️";
+}
+
+/* -------------------- FORMULÁRIO / INÍCIO -------------------- */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text);
+    font-size: 15px;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--input-border);
+    background-color: var(--card);
+    color: var(--text);
+    font-size: 16px;
+    appearance: none; /* Remove seta padrão */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%236B7280' d='M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+}
+
+
+/* --- Abas (Tabs) --- */
+.tabs-menu {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--tab-bg);
+    color: var(--text);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.tab-btn.active {
+    background-color: var(--tab-active-bg);
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Painéis de Conteúdo */
+.themes-tab-pane {
+    display: none;
+    padding: 5px;
+}
+.themes-tab-pane.active {
+    display: block;
+}
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--input-border);
+    background: var(--bg); /* Usa o fundo do app, não do card */
+    cursor: pointer;
+    font-weight: normal;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.checkbox-label:hover {
+    background: var(--glass);
+}
+
+.checkbox-label input:checked + span {
+    color: var(--accent1);
+    font-weight: 700;
+}
+
+/* Botões */
+.actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.btn.primary {
+    background-color: var(--accent1);
+    color: white;
+}
+
+.btn.danger {
+    background-color: var(--danger);
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* -------------------- TELA DO QUIZ -------------------- */
+.banner {
+    position: relative;
+    padding: 15px;
+    margin-top: -30px; /* Sobrepõe um pouco o header */
+    border-radius: 14px;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    transition: background 0.3s;
+}
+
+.question-card {
+    padding: 18px;
+    border-radius: 20px;
+    margin-top: 20px;
+}
+
+.time-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--input-border);
+}
+.q-number {
+    font-weight: 600;
+}
+.time {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--success); /* Cor inicial, JS ajusta */
+}
+
+.question-text {
+    font-size: 18px;
+    margin: 6px 0 20px 0;
+    text-align: center;
+    min-height: 40px; /* Para evitar saltos de layout */
+}
+
+/* answers */
+.answers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.answer-btn {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 14px;
+    border: 1px solid var(--input-border);
+    text-align: left;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all .18s;
+    box-shadow: 0 6px 14px rgba(8,18,36,0.06);
+    color: var(--text);
+}
+
+.answer-btn:hover:not(.disabled) {
+    background-color: var(--glass);
+    border-color: var(--accent1);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(8,18,36,0.1);
+}
+
+.answer-btn.disabled {
+    opacity: 0.7;
+    pointer-events: none;
+    transform: none;
+    box-shadow: none;
+}
+
+/* correct/incorrect states */
+.answer-correct {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+    transform: scale(1.02);
+}
+.answer-wrong {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
+}
+
+/* progress */
+.progress-wrap {
+    margin-top: 20px;
+}
+.progress-bar {
+    height: 8px;
+    background: var(--input-border);
+    border-radius: 999px;
+    overflow: hidden;
+}
+#progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    transition: width .5s ease;
+}
+
+/* -------------------- TELA DE RESULTADO -------------------- */
+#result-screen {
+    /* Centralizado via flexbox no main content */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.card-inner {
+    max-width: 450px;
+    width: 100%;
+    padding: 24px;
+}
+
+.big {
+    font-size: 22px;
+    font-weight: 800; 
+    color: var(--accent1);
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.muted {
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.summary {
+    white-space: pre-wrap;
+    padding: 15px;
+    border-radius: 10px;
+    background: var(--glass);
+    margin-top: 20px;
+    font-size: 14px;
+    text-align: left;
+    color: var(--text);
+}
+.result-actions { 
+    margin-top: 30px;
+    width: 100%;
+}
+.result-actions .btn { 
+    flex: 1; 
+}
+
+/* -------------------- RESPONSIVIDADE -------------------- */
+@media (max-width: 600px){
+    /* Header */
+    .header { height: 160px; }
+    .app-title { font-size: 24px; }
+    .theme-toggle { top: 10px; right: 10px; }
     
-    // 1. Desativa botões e painéis
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".themes-tab-pane").forEach(p => p.classList.remove("active"));
+    /* Layout */
+    .actions { flex-direction: column; gap: 10px; }
+    .btn { font-size: 15px; }
 
-    // 2. Ativa o botão e painel corretos
-    btn.classList.add("active");
-    const activePane = document.getElementById(`tab-${tabName}`);
-    if (activePane) {
-      activePane.classList.add("active");
+    /* Tabs */
+    .tabs-menu { flex-direction: column; }
+    .checkbox-grid { 
+        grid-template-columns: 1fr; /* Uma coluna em mobile */
+        gap: 8px;
     }
-  });
 }
-/* ----------------------------------------------------------------- */
-
-/* ---------- Start / Preview ---------- */
-btnPreview.addEventListener("click", ()=>{
-  // Pega checkboxes em *todos* os painéis
-  const temas = Array.from(document.querySelectorAll('.themes-tabs-content input[type=checkbox]'))
-    .filter(i=>i.checked).map(i=>i.value);
-  if(temas.length === 0){ alert("Nenhum tema selecionado. Marque pelo menos um tema."); return; }
-  alert("Serão incluídos os temas:\n\n" + temas.join("\n"));
-});
-
-btnStart.addEventListener("click", prepareAndStart);
-
-/* ---------- Core: prepare and start ---------- */
-function prepareAndStart(){
-  dificuldade = selectDiff.value || "Médio";
-  
-  // Pega checkboxes em *todos* os painéis
-  const temas = Array.from(document.querySelectorAll('.themes-tabs-content input[type=checkbox]'))
-    .filter(i=>i.checked).map(i=>i.value);
-
-  if(temas.length === 0){ alert("Selecione pelo menos um tema para iniciar."); return; }
-
-  perguntasAtivas = QUESTOES.filter(q => temas.includes(q.categoria)).map(q => ({...q}));
-  if(perguntasAtivas.length === 0){ alert("Não há perguntas para os temas selecionados."); return; }
-
-  shuffle(perguntasAtivas);
-  // Mantive a limitação de 40 perguntas, mas o quiz rodará com todas as selecionadas se forem menos.
-  perguntasAtivas = perguntasAtivas.slice(0,40); 
-  index = 0;
-  pontos = 0;
-  buildQuizScreen();
-}
-
-/* ---------- Build quiz screen ---------- */
-function buildQuizScreen(){
-  // stop existing timer
-  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
-
-  // show/hide
-  startScreen.style.display = "none";
-  resultScreen.style.display = "none";
-  quizScreen.style.display = "block";
-
-  const current = perguntasAtivas[index];
-  banner.style.background = CORES[current.categoria] || "#333";
-  banner.textContent = current.categoria.toUpperCase();
-
-  qNumber.textContent = `Pergunta ${index+1} / ${perguntasAtivas.length}`;
-  qText.textContent = current.pergunta;
-
-  // clear answers & create buttons
-  answersWrap.innerHTML = "";
-  const opcoes = current.opcoes.slice();
-  // Shuffle respostas
-  shuffle(opcoes);
-  opcoes.forEach(op => {
-    const btn = document.createElement("button");
-    btn.className = "answer-btn";
-    btn.textContent = op;
-    btn.onclick = ()=> onChoice(op, btn);
-    answersWrap.appendChild(btn);
-  });
-
-  // progress
-  const pct = Math.round((index / perguntasAtivas.length) * 100);
-  progressFill.style.width = `${pct}%`;
-
-  // config tempo
-  const base = TEMPO_BASE_CATEGORIA[current.categoria] || 12;
-  const mult = MULTIPLICADOR_DIFICULDADE[dificuldade] || 1.0;
-  tempoAtual = Math.max(3, Math.floor(base * mult));
-  updateTempoLabelColor();
-  timeLabel.textContent = `Tempo: ${tempoAtual}s`;
-
-  // start countdown (per second)
-  timerInterval = setInterval(()=> {
-    tempoAtual -= 1;
-    timeLabel.textContent = `Tempo: ${tempoAtual}s`;
-    updateTempoLabelColor();
-    if(tempoAtual <= 0){
-      clearInterval(timerInterval); timerInterval = null;
-      revelarResposta(null);
-    } else if (tempoAtual <= 3){
-      tocar_aviso();
-    }
-  }, 1000);
-}
-
-/* ---------- tempo color ---------- */
-function updateTempoLabelColor(){
-  if(tempoAtual > 8){ timeLabel.style.color = "#00ff99"; }
-  else if (tempoAtual > 4){ timeLabel.style.color = "#ffdd00"; }
-  else { timeLabel.style.color = "#ff4444"; }
-}
-
-/* ---------- when user chooses ---------- */
-function onChoice(escolha, btn){
-  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
-  revelarResposta(escolha);
-}
-
-/* ---------- reveal answer ---------- */
-function revealFeedbackOnButtons(correct, chosen){
-  const buttons = Array.from(answersWrap.querySelectorAll(".answer-btn"));
-  buttons.forEach(b=>{
-    b.classList.add("disabled");
-    const txt = b.textContent;
-    if(txt === correct){
-      b.classList.add("answer-correct");
-    } else if (chosen !== null && txt === chosen && txt !== correct){
-      b.classList.add("answer-wrong");
-    } else {
-      // keep neutral
-    }
-  });
-}
-
-function revelarResposta(escolha){
-  const q = perguntasAtivas[index];
-  const correta = q.resposta;
-
-  revealFeedbackOnButtons(correta, escolha);
-
-  if(escolha === correta){
-    pontos += 1;
-    tocar_acerto();
-  } else {
-    tocar_erro();
-  }
-
-  // advance after short pause (900ms like original)
-  setTimeout(()=> {
-    nextQuestion();
-  }, 900);
-}
-
-/* ---------- next question ---------- */
-function nextQuestion(){
-  index += 1;
-  // update progress
-  const pct = Math.round((index / perguntasAtivas.length) * 100);
-  progressFill.style.width = `${pct}%`;
-
-  if(index >= perguntasAtivas.length){
-    showResult();
-    return;
-  }
-  buildQuizScreen();
-}
-
-/* ---------- show result ---------- */
-function showResult(){
-  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
-  quizScreen.style.display = "none";
-  resultScreen.style.display = "block";
-
-  scoreText.textContent = `Você acertou ${pontos} de ${perguntasAtivas.length} perguntas`;
-  const perc = Math.round((pontos / perguntasAtivas.length) * 100);
-  let perf = "Precisa melhorar";
-  if(perc === 100) perf = "PERFEITO! 🔥";
-  else if(perc >= 80) perf = "Excelente!";
-  else if(perc >= 60) perf = "Muito bom!";
-  else if(perc >= 40) perf = "Regular";
-  perfText.textContent = `Desempenho: ${perf} (${perc}%)`;
-
-  // resumo por categoria
-  const resumo = {};
-  perguntasAtivas.forEach(q => { resumo[q.categoria] = (resumo[q.categoria]||0) + 1; });
-  summary.textContent = "Perguntas por categoria incluídas:\n" + Object.entries(resumo).map(([k,v])=>`${k}: ${v}`).join("\n");
-}
-
-/* ---------- restart / exit ---------- */
-btnRestart.addEventListener("click", ()=>{
-  // go back to start screen
-  resultScreen.style.display = "none";
-  startScreen.style.display = "block";
-});
-btnExit.addEventListener("click", ()=> {
-  // simple behavior: reload page (simulate exit)
-  window.location.reload();
-});
-
-/* ---------- keyboard accessibility: Enter to start ---------- */
-document.addEventListener("keydown", (e)=>{
-  if(e.key === "Enter" && startScreen.style.display !== "none"){
-    prepareAndStart();
-  }
-});
