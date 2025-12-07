@@ -1,10 +1,10 @@
 /* script.js
    VERSÃO FINAL E CORRIGIDA.
-   - Inclui 35 perguntas no total (3 temas existentes + 1 novo tema).
    - Corrige a inicialização dos botões e a navegação entre telas.
+   - Garante que apenas uma tela está visível ao mesmo tempo (usando a classe .hidden do CSS).
 */
 
-/* -------------------- REGISTRO DO SERVICE WORKER (PWA) -------------------- */
+/* -------------------- REGISTRO DO SERVICE WORKER -------------------- */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     // Note: Usamos o caminho absoluto /sw.js, o que funciona melhor com o GitHub Pages
@@ -15,50 +15,23 @@ if ('serviceWorker' in navigator) {
 }
 /* -------------------------------------------------------------------- */
 
-/* ---------- Perguntas (AGORA COM 35 QUESTÕES E 4 TEMAS) ---------- */
+/* ---------- Perguntas (copiado do seu quiz.py) ---------- */
 const QUESTOES = [
-  // --- INFORMÁTICA GERAL (10 QUESTÕES) ---
   {"categoria":"Informática Geral","pergunta":"O que significa HTML?","opcoes":["HyperText Markup Language","HighText Machine Language","Hyper Transfer Markup Level","Hyperlinks Text Memory Language"],"resposta":"HyperText Markup Language"},
   {"categoria":"Informática Geral","pergunta":"Qual linguagem é executada no navegador?","opcoes":["Python","JavaScript","C#","Java"],"resposta":"JavaScript"},
   {"categoria":"Informática Geral","pergunta":"O que significa WWW?","opcoes":["Wide World Web","Wide Web Window","World Wide Web","World Web Wireless"],"resposta":"World Wide Web"},
   {"categoria":"Informática Geral","pergunta":"Qual desses é um sistema operacional?","opcoes":["Chrome","Firefox","Windows","Google Drive"],"resposta":"Windows"},
   {"categoria":"Informática Geral","pergunta":"Qual empresa criou o Windows?","opcoes":["Microsoft","Apple","IBM","Intel"],"resposta":"Microsoft"},
-  {"categoria":"Informática Geral","pergunta":"O que é um arquivo PDF?","opcoes":["Programa de Design Funcional","Protocolo de Dados Fixos","Portable Document Format","Página de Documento Final"],"resposta":"Portable Document Format"},
-  {"categoria":"Informática Geral","pergunta":"Qual é o principal protocolo para envio de e-mail?","opcoes":["FTP","HTTP","SMTP","POP3"],"resposta":"SMTP"},
-  {"categoria":"Informática Geral","pergunta":"O que significa 'Cloud Computing'?","opcoes":["Computação na nuvem","Armazenamento local","Processamento em cache","Servidores físicos"],"resposta":"Computação na nuvem"},
-  {"categoria":"Informática Geral","pergunta":"Qual extensão é comum para arquivos compactados?","opcoes":[".exe",".zip",".jpg",".mp4"],"resposta":".zip"},
-  {"categoria":"Informática Geral","pergunta":"O que é um firewall?","opcoes":["Um software de edição de imagens","Um sistema de segurança de rede","Um tipo de vírus","Uma linguagem de programação"],"resposta":"Um sistema de segurança de rede"},
-
-  // --- HARDWARE (10 QUESTÕES) ---
   {"categoria":"Hardware","pergunta":"Qual componente armazena dados permanentemente?","opcoes":["RAM","SSD/HDD","GPU","Fonte"],"resposta":"SSD/HDD"},
   {"categoria":"Hardware","pergunta":"Qual é responsável pelo processamento gráfico?","opcoes":["CPU","GPU","RAM","Fonte de alimentação"],"resposta":"GPU"},
   {"categoria":"Hardware","pergunta":"O que é RAM?","opcoes":["Memória de acesso rápido","Memória somente leitura","Memória de vídeo","Cache do processador"],"resposta":"Memória de acesso rápido"},
   {"categoria":"Hardware","pergunta":"Qual porta é usada para conectar um cabo de rede (internet)?","opcoes":["USB","HDMI","RJ45","VGA"],"resposta":"RJ45"},
   {"categoria":"Hardware","pergunta":"Qual componente é o 'cérebro' do computador?","opcoes":["Placa Mãe","Memória RAM","CPU","Placa de Vídeo"],"resposta":"CPU"},
-  {"categoria":"Hardware","pergunta":"O que é o BIOS/UEFI?","opcoes":["Sistema operacional","Firmware de inicialização","Um tipo de placa de vídeo","Memória de rede"],"resposta":"Firmware de inicialização"},
-  {"categoria":"Hardware","pergunta":"O que mede a velocidade de um processador?","opcoes":["Volts","Gigahertz (GHz)","Megabytes (MB)","Pixels"],"resposta":"Gigahertz (GHz)"},
-  {"categoria":"Hardware","pergunta":"Qual tipo de memória é volátil?","opcoes":["ROM","SSD","RAM","HDD"],"resposta":"RAM"},
-  {"categoria":"Hardware","pergunta":"Qual o nome do slot da Placa-Mãe usado para Placas de Vídeo modernas?","opcoes":["AGP","PCI","ISA","PCI Express (PCIe)"],"resposta":"PCI Express (PCIe)"},
-  {"categoria":"Hardware","pergunta":"Qual componente converte energia AC para DC no PC?","opcoes":["CPU","Fonte de alimentação","Placa Mãe","Dissipador"],"resposta":"Fonte de alimentação"},
-
-  // --- PROGRAMAÇÃO (10 QUESTÕES) ---
   {"categoria":"Programação","pergunta":"O que é um 'bug'?","opcoes":["Um erro no código","Um tipo de dado","Um comando de loop","Um atalho de teclado"],"resposta":"Um erro no código"},
   {"categoria":"Programação","pergunta":"O que faz um loop 'for'?","opcoes":["Executa um código uma única vez","Executa um código sob uma condição","Executa um código repetidamente por um número fixo de vezes","Define uma função"],"resposta":"Executa um código repetidamente por um número fixo de vezes"},
   {"categoria":"Programação","pergunta":"Qual símbolo é usado para comentários em Python?","opcoes":["//","#","/* */","--"],"resposta":"#"},
   {"categoria":"Programação","pergunta":"Em JS, qual palavra-chave declara uma variável que não pode ser reatribuída?","opcoes":["var","let","const","func"],"resposta":"const"},
-  {"categoria":"Programação","pergunta":"O que é uma API?","opcoes":["Interface de programação de aplicativos","Servidor de banco de dados","Linguagem de estilos","Protocolo de internet"],"resposta":"Interface de programação de aplicativos"},
-  {"categoria":"Programação","pergunta":"O que significa a sigla HTML?","opcoes":["High Text Model Language","HyperText Markup Language","Home Tool Markup Language","Hyper Transfer Markup Language"],"resposta":"HyperText Markup Language"},
-  {"categoria":"Programação","pergunta":"Qual estrutura controla a execução de código baseada em uma condição (true/false)?","opcoes":["Loop For","Função","Condicional If/Else","Variável"],"resposta":"Condicional If/Else"},
-  {"categoria":"Programação","pergunta":"O que é 'variável' em programação?","opcoes":["Um valor constante","Um erro de sintaxe","Um local de armazenamento de dados","Um tipo de função"],"resposta":"Um local de armazenamento de dados"},
-  {"categoria":"Programação","pergunta":"Qual linguagem é tipicamente usada para estilizar páginas web?","opcoes":["JavaScript","Python","CSS","PHP"],"resposta":"CSS"},
-  {"categoria":"Programação","pergunta":"O que é 'compilação'?","opcoes":["Executar o código linha por linha","Traduzir código fonte para código de máquina","Escrever código em um editor de texto","Testar o software"],"resposta":"Traduzir código fonte para código de máquina"},
-
-  // --- REDES E SEGURANÇA (5 QUESTÕES - NOVO TEMA) ---
-  {"categoria":"Redes e Segurança","pergunta":"Qual protocolo é usado para navegar na web (endereço de sites)?","opcoes":["FTP","SMTP","HTTPS","ARP"],"resposta":"HTTPS"},
-  {"categoria":"Redes e Segurança","pergunta":"O que significa o 'IP' de um computador?","opcoes":["Informação de Produto","Protocolo de Internet","Ponto de Interface","Identificação Pessoal"],"resposta":"Protocolo de Internet"},
-  {"categoria":"Redes e Segurança","pergunta":"Qual ataque tenta sobrecarregar um servidor para que ele pare de funcionar?","opcoes":["Phishing","SQL Injection","DDoS (Negação de Serviço Distribuída)","Malware"],"resposta":"DDoS (Negação de Serviço Distribuída)"},
-  {"categoria":"Redes e Segurança","pergunta":"O que é uma VPN?","opcoes":["Rede pública e aberta","Rede virtual privada","Antivírus","Ponto de acesso Wi-Fi"],"resposta":"Rede virtual privada"},
-  {"categoria":"Redes e Segurança","pergunta":"Em redes, o que é um 'Gateway'?","opcoes":["Um cabo de rede","Um dispositivo que conecta duas redes diferentes","Um tipo de protocolo de segurança","Um servidor de arquivos"],"resposta":"Um dispositivo que conecta duas redes diferentes"}
+  {"categoria":"Programação","pergunta":"O que é uma API?","opcoes":["Interface de programação de aplicativos","Servidor de banco de dados","Linguagem de estilos","Protocolo de internet"],"resposta":"Interface de programação de aplicativos"}
 ];
 
 /* ---------- Variáveis e Elementos ---------- */
@@ -93,7 +66,8 @@ let dificuldade = 1.0; // 1.0 = normal
 /* ---------- Funções de Utilidade (Show/Hide) ---------- */
 function show(el) {
   el.classList.remove("hidden");
-  el.style.display = "flex"; // Usando flex para garantir centralização vertical
+  // O estilo display: block/flex é tratado pelo CSS, mas o JS pode forçar se necessário
+  el.style.display = "block"; 
 }
 
 function hide(el) {
@@ -170,39 +144,27 @@ btnTheme.addEventListener("click", toggleTheme);
 /* ---------- 2. Lógica do Quiz (Setup e Navegação) ---------- */
 
 function prepararPerguntas() {
-  // 1. Tenta pegar os temas selecionados pelo usuário
-  let temasSelecionados = Array.from(document.querySelectorAll('input[name="tema"]:checked')).map(cb => cb.value);
-  
+  const temasSelecionados = Array.from(document.querySelectorAll('input[name="tema"]:checked')).map(cb => cb.value);
   const totalPerguntas = parseInt(document.getElementById("num-q").value) || 10;
   dificuldade = parseFloat(document.getElementById("dificuldade").value) || 1.0;
 
-  // 2. CORREÇÃO CRÍTICA: Se a lista de selecionados estiver vazia, usa TODOS os temas
-  if (temasSelecionados.length === 0) {
-      // Pega o valor de TODOS os checkboxes, independentemente de estarem marcados
-      temasSelecionados = Array.from(document.querySelectorAll('input[name="tema"]')).map(cb => cb.value);
-      
-      if (temasSelecionados.length === 0) {
-           alert("Nenhum tema foi configurado no formulário HTML. Verifique o código.");
-           return false;
-      }
-  }
-
-  // 3. Filtra as perguntas com base na seleção (ou em todos os temas)
   let perguntasFiltradas = QUESTOES.filter(q => temasSelecionados.includes(q.categoria));
   
   if (perguntasFiltradas.length === 0) {
-    alert("Não foi possível carregar perguntas para os temas selecionados. Tente novamente.");
+    alert("Selecione pelo menos um tema!");
     return false;
   }
-  
-  // Embaralha e limita as perguntas...
+
+  // Embaralha todas as perguntas filtradas
   perguntasFiltradas = perguntasFiltradas.sort(() => 0.5 - Math.random());
+
+  // Limita ao número total desejado
   perguntasAtivas = perguntasFiltradas.slice(0, totalPerguntas);
   
-  // Reinicia variáveis
+  // Reinicia variáveis (apesar de já estarem no btnRestart, é bom garantir)
   questaoAtual = 0;
   pontos = 0;
-  return true; // Retorna true para iniciar o quiz
+  return true;
 }
 
 function prepararETeleQuiz() {
@@ -283,7 +245,7 @@ function showResult(){
   
   // Esconde o quiz e mostra o resultado
   hide(quizScreen);
-  show(resultScreen); // O show usa display: flex; para centralizar
+  show(resultScreen);
   
   // Atualiza o progresso para 100%
   progressFill.style.width = "100%";
@@ -307,12 +269,10 @@ function showResult(){
 
 /* ---------- Timer e Sons ---------- */
 
-// TEMPOS ATUALIZADOS COM NOVO TEMA
 const TEMPO_BASE = {
   "Informática Geral": 30,
   "Hardware": 25,
-  "Programação": 20,
-  "Redes e Segurança": 25 // NOVO TEMA
+  "Programação": 20 
 };
 
 function iniciarTimer(categoria) {
@@ -374,7 +334,7 @@ btnRestart.addEventListener("click", () => {
   tempoRestante = 0;
   
   hide(resultScreen);
-  show(startScreen); // O show usa display: flex; para centralizar
+  show(startScreen);
   
   // Opcional: Limpar o formulário para selecionar novos temas/dificuldade
   form.reset(); 
@@ -393,5 +353,5 @@ window.addEventListener("DOMContentLoaded", () => {
     // Garante que só a tela inicial está visível ao carregar o app, prevenindo o erro de sobreposição
     hide(quizScreen);
     hide(resultScreen);
-    show(startScreen); // O show usa display: flex; para centralizar
+    show(startScreen);
 });
